@@ -34,7 +34,8 @@
     "url": "https://github.com/Suknna/opencode-ssh/issues"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
