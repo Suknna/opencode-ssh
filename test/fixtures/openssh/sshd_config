@@ -1,0 +1,5 @@
+Port 2222
+ListenAddress 0.0.0.0
+PasswordAuthentication yes
+UsePAM no
+Subsystem sftp internal-sftp
