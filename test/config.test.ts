@@ -82,6 +82,24 @@ describe("SSH configuration", () => {
     expect(config.hosts[1]).toMatchObject({ name: "project", port: 2200 });
   });
 
+  test("does not load global config twice when project directory is opencode config directory", async () => {
+    await writeJson(globalConfigPath, {
+      hosts: [hostConfig("global", "global.example.com")],
+      history: {
+        enabled: false,
+        cleanupOnClose: false,
+      },
+    });
+
+    const config = await loadConfig(join(homeDirectory, ".config", "opencode"));
+
+    expect(config.hosts.map((host) => host.name)).toEqual(["global"]);
+    expect(config.history).toEqual({
+      enabled: false,
+      cleanupOnClose: false,
+    });
+  });
+
   test("rejects duplicate host names across global and project config", async () => {
     await writeJson(globalConfigPath, {
       hosts: [hostConfig("shared", "global.example.com")],

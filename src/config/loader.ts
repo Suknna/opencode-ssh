@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 import { normalizeConfig } from "./schema.js";
 import type { SSHPluginConfig } from "./types.js";
@@ -26,12 +26,23 @@ export async function loadConfig(projectDirectory: string): Promise<SSHPluginCon
   const globalPath = join(homeDirectory(), ".config", "opencode", CONFIG_FILE_NAME);
   const projectPath = join(projectDirectory, CONFIG_FILE_NAME);
 
+  if (isSameConfigPath(globalPath, projectPath)) {
+    return mergeConfigs(await loadConfigFile(globalPath), emptyLoadedConfig(projectPath));
+  }
+
   const [globalConfig, projectConfig] = await Promise.all([
     loadConfigFile(globalPath),
     loadConfigFile(projectPath),
   ]);
 
   return mergeConfigs(globalConfig, projectConfig);
+}
+
+function emptyLoadedConfig(source: string): LoadedConfig {
+  return {
+    config: normalizeConfig(undefined, source),
+    hasHistory: false,
+  };
 }
 
 export function mergeConfigs(globalConfig: LoadedConfig, projectConfig: LoadedConfig): SSHPluginConfig {
@@ -98,6 +109,10 @@ function homeDirectory(): string {
     throw new ConfigLoadError("HOME_MISSING", "HOME environment variable is not set", "global config");
   }
   return home;
+}
+
+function isSameConfigPath(left: string, right: string): boolean {
+  return resolve(left) === resolve(right);
 }
 
 function isNodeError(error: unknown): error is NodeJS.ErrnoException {
