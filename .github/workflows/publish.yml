@@ -40,9 +40,11 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Verify tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
-          TAG_NAME="${GITHUB_REF_NAME:-${{ github.event.inputs.tag }}}"
+          TAG_NAME="$RELEASE_TAG"
           TAG_VERSION="${TAG_NAME#v}"
           if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
             echo "Tag $TAG_NAME does not match package.json version $PKG_VERSION" >&2
