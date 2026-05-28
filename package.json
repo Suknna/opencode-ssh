@@ -1,6 +1,6 @@
 {
   "name": "opencode-ssh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenCode plugin that gives the AI eight SSH tools to operate remote Linux hosts: list, connect, exec, PTY, history, upload, download, close.",
   "type": "module",
   "main": "dist/index.js",
