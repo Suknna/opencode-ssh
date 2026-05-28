@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.tmp/
+.opencode/ssh/
+*.tsbuildinfo
+.DS_Store
